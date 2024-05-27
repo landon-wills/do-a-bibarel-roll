@@ -1,5 +1,6 @@
 package ca.landonjw.mixin;
 
+import com.cobblemon.mod.common.entity.pokemon.PokemonBehaviourFlag;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -17,7 +18,10 @@ public class ServerPlayerMixin {
         ServerPlayer player = (ServerPlayer)(Object)this;
         Entity vehicle = player.getVehicle();
 
-        if (player.getVehicle() != null && player.getVehicle() instanceof PokemonEntity) {
+        if (player.getVehicle() != null && player.getVehicle() instanceof PokemonEntity pokemon) {
+            if (!pokemon.isFlying()) {
+                pokemon.setBehaviourFlag(PokemonBehaviourFlag.FLYING, true);
+            }
             Vec3 lookAngle = player.getLookAngle();
             Vec3 deltaMovement = player.getDeltaMovement();
             player.setDeltaMovement(deltaMovement.add(

@@ -6,7 +6,6 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import nl.enjarai.doabarrelroll.api.RollEntity;
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -30,7 +29,6 @@ public class PlayerRendererMixin {
                     .mul(camera.rotation().get(new Matrix4f()))
                     .rotateY(yaw);
 
-//            var finalYaw = poseStack.last().pose().get(new Matrix4f()).getEulerAnglesXYZ(new Vector3f()).y;
             abstractClientPlayer.yBodyRot = abstractClientPlayer.yHeadRot;
         }
     }
