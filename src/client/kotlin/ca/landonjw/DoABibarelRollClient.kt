@@ -1,7 +1,14 @@
 package ca.landonjw
 
+import ca.landonjw.network.NetworkingConstants
+import com.cobblemon.mod.common.api.events.CobblemonEvents
+import com.cobblemon.mod.common.client.gui.interact.wheel.InteractWheelOption
+import com.cobblemon.mod.common.client.gui.interact.wheel.Orientation
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity
+import com.cobblemon.mod.common.util.cobblemonResource
 import net.fabricmc.api.ClientModInitializer
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs
 import net.minecraft.client.Minecraft
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.SmoothDouble
@@ -45,6 +52,19 @@ object DoABibarelRollClient : ClientModInitializer {
 				)
 				.useModifier(RotationModifiers::banking, ModConfig.INSTANCE::getEnableBanking)
 		}, 1000, { POKEMON_FLY_GROUP.get() && !DABR_GROUP.get()})
+
+		CobblemonEvents.POKEMON_INTERACTION_GUI_CREATION.subscribe { guiEvent ->
+			guiEvent.addOption(Orientation.BOTTOM_RIGHT, InteractWheelOption(
+				iconResource = cobblemonResource("textures/gui/interact/icon_shoulder.png"),
+				tooltipText = "Fly",
+				onPress = {
+					val packet = PacketByteBufs.create()
+					packet.writeUUID(guiEvent.pokemonID)
+					ClientPlayNetworking.send(NetworkingConstants.START_RIDING_PACKET_ID, packet)
+					Minecraft.getInstance().setScreen(null)
+				}
+			))
+		}
 	}
 
 	fun shouldRoll(): Boolean {

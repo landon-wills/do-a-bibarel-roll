@@ -26,27 +26,53 @@ public class PokemonRendererMixin {
             if (rollEntity.doABarrelRoll$isRolling()) {
                 var camera = Minecraft.getInstance().gameRenderer.getMainCamera();
 
-                var entityPosition = entity.position();
-                var riderPosition = passenger.position();
-                var yOffset = 0.7f; // Charizard
+                if (camera.isDetached()) {
+                    System.out.println("Detached");
+                    var entityPosition = entity.position();
+                    var riderPosition = passenger.position();
+                    var yOffset = 0.7f; // Charizard
 
-                var difference = new Vector3f(
-                        (float) (riderPosition.x - entityPosition.x),
-                        (float) (riderPosition.y - entityPosition.y),
-                        (float) (riderPosition.z - entityPosition.z)
-                );
-                var differenceInverse = new Vector3f(difference).mul(-1).add(new Vector3f(0, yOffset, 0));
+                    var difference = new Vector3f(
+                            (float) (riderPosition.x - entityPosition.x),
+                            (float) (riderPosition.y - entityPosition.y),
+                            (float) (riderPosition.z - entityPosition.z)
+                    );
+                    var differenceInverse = new Vector3f(difference).mul(-1).add(new Vector3f(0, yOffset, 0));
 
-                var cameraMatrix = camera.rotation().get(new Matrix4f());
-                var cameraYaw = camera.getYRot() / 57.2958f;
+                    var cameraMatrix = camera.rotation().get(new Matrix4f());
+                    var cameraYaw = camera.getYRot() / 57.2958f;
 
-                entity.yBodyRot = passenger.getYHeadRot();
+                    entity.yBodyRot = passenger.getYHeadRot();
 
-                poseMatrix.last().pose()
-                        .translate(difference)
-                        .mul(cameraMatrix)
-                        .rotateY(cameraYaw)
-                        .translate(differenceInverse);
+                    poseMatrix.last().pose()
+                            .translate(difference)
+                            .mul(cameraMatrix)
+                            .rotateY(cameraYaw)
+                            .translate(differenceInverse);
+                }
+                else {
+                    var entityPosition = entity.position();
+                    var cameraPosition = passenger.getEyePosition();
+                    var yOffset = 0.7f; // Charizard
+
+                    var difference = new Vector3f(
+                            (float) (cameraPosition.x - entityPosition.x),
+                            (float) (cameraPosition.y - entityPosition.y),
+                            (float) (cameraPosition.z - entityPosition.z)
+                    );
+                    var differenceInverse = new Vector3f(difference).mul(-1).add(new Vector3f(0, yOffset, 0));
+
+                    var cameraMatrix = camera.rotation().get(new Matrix4f());
+                    var cameraYaw = camera.getYRot() / 57.2958f;
+
+                    entity.yBodyRot = passenger.getYHeadRot();
+
+                    poseMatrix.last().pose()
+                            .translate(difference)
+                            .mul(cameraMatrix)
+                            .rotateY(cameraYaw)
+                            .translate(differenceInverse);
+                }
             }
         }
     }
