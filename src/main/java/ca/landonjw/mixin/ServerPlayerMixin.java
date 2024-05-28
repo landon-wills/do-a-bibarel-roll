@@ -30,7 +30,7 @@ public class ServerPlayerMixin {
             Vec3 lookAngle = player.getLookAngle();
             Vec3 deltaMovement = player.getDeltaMovement();
 
-            if (!isNearGround || player.getLookAngle().y > 0.66) {
+            if (!isNearGround || player.getLookAngle().y > 0.3) {
                 pokemon.setDeltaMovement(
                         lookAngle.x * 0.1 + (lookAngle.x * 1.5 - deltaMovement.x) * 0.5,
                         lookAngle.y * 0.1 + (lookAngle.y * 1.5 - deltaMovement.y) * 0.5,
