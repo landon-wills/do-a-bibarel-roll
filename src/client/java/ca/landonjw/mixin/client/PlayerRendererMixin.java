@@ -1,6 +1,6 @@
 package ca.landonjw.mixin.client;
 
-import ca.landonjw.ThirdPersonAnimationSynchronizer;
+import ca.landonjw.util.AngleHelper;
 import com.cobblemon.mod.common.client.entity.PokemonClientDelegate;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -26,9 +26,9 @@ public class PlayerRendererMixin {
         if (abstractClientPlayer.isPassenger()) {
             var vehicle = abstractClientPlayer.getVehicle();
 
-            if (vehicle instanceof PokemonEntity pokemonEntity) {
+            if (vehicle instanceof PokemonEntity pokemonEntity && abstractClientPlayer instanceof RollEntity rollEntity && rollEntity.doABarrelRoll$isRolling()) {
                 var camera = Minecraft.getInstance().gameRenderer.getMainCamera();
-                var yaw = camera.getYRot() / 57.2958f;
+                var yaw = AngleHelper.INSTANCE.toRadians(camera.getYRot());
 
 
                 var delegate = (PokemonClientDelegate) pokemonEntity.getDelegate();
@@ -56,11 +56,6 @@ public class PlayerRendererMixin {
                 }
 
                 var animationOffset = defaultPokemonPosition.sub(currentPokemonPosition).mul(0.1F);
-
-//                var pokemonFrame = ThirdPersonAnimationSynchronizer.INSTANCE.getOffsets().get(pokemonEntity.getUUID());
-
-//                var offset = new Vector3f(0f, (float) (Math.sin(pokemonFrame * 90 * 3 * 1.5 - 90)), 0f);
-
 
                 poseStack.last().pose()
                         .mul(camera.rotation().get(new Matrix4f()))

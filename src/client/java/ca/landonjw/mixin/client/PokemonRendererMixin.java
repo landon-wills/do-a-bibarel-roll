@@ -1,5 +1,6 @@
 package ca.landonjw.mixin.client;
 
+import ca.landonjw.util.AngleHelper;
 import com.cobblemon.mod.common.client.render.pokemon.PokemonRenderer;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -24,8 +25,7 @@ public class PokemonRendererMixin {
     )
     public void doABibarelRoll$renderPokemon(PokemonEntity entity, float entityYaw, float partialTicks, PoseStack poseMatrix, MultiBufferSource buffer, int packedLight, CallbackInfo ci) {
         var passenger = entity.getFirstPassenger();
-        if (passenger instanceof Player) {
-//                System.out.println(entity.getYRot());
+        if (passenger instanceof RollEntity rollEntity && rollEntity.doABarrelRoll$isRolling()) {
             var camera = Minecraft.getInstance().gameRenderer.getMainCamera();
 
             if (camera.isDetached()) {
@@ -40,7 +40,7 @@ public class PokemonRendererMixin {
                 var differenceInverse = new Vector3f(difference).mul(-1).add(getThirdPersonOffset(entity));
 
                 var cameraMatrix = camera.rotation().get(new Matrix4f());
-                var cameraYaw = camera.getYRot() / 57.2958f;
+                var cameraYaw = AngleHelper.INSTANCE.toRadians(camera.getYRot());
 
                 entity.yBodyRot = passenger.getYHeadRot();
                 entity.setYRot(cameraYaw);
@@ -63,7 +63,7 @@ public class PokemonRendererMixin {
                 var differenceInverse = new Vector3f(difference).mul(-1).add(getFirstPersonOffset(entity));
 
                 var cameraMatrix = camera.rotation().get(new Matrix4f());
-                var cameraYaw = camera.getYRot() / 57.2958f;
+                var cameraYaw = AngleHelper.INSTANCE.toRadians(camera.getYRot());
 
                 entity.yBodyRot = passenger.getYHeadRot();
 
@@ -79,7 +79,7 @@ public class PokemonRendererMixin {
     @Unique
     private Vector3f getFirstPersonOffset(PokemonEntity entity) {
         var species = entity.getExposedSpecies().getName();
-        if (species.equalsIgnoreCase("Charizard")) return new Vector3f(0F, -0.7F, 0F);
+        if (species.equalsIgnoreCase("Charizard")) return new Vector3f(0F, 0.7F, 0F);
         if (species.equalsIgnoreCase("Pidgeot")) return new Vector3f(0F, 0F, 0F);
         if (species.equalsIgnoreCase("Aerodactyl")) return new Vector3f(0F, 0F, 0F);
         return new Vector3f(0F, 0F, 0F);
@@ -93,22 +93,5 @@ public class PokemonRendererMixin {
         if (species.equalsIgnoreCase("Aerodactyl")) return new Vector3f(0F, 0F, 0F);
         return new Vector3f(0F, 0F, 0F);
     }
-
-//    @Inject(
-//            method = "render(Lcom/cobblemon/mod/common/entity/pokemon/PokemonEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
-//            at = @At(value = "TAIL")
-//    )
-//    public void doABibarelRoll$trackPlayerOffset(PokemonEntity entity, float entityYaw, float partialTicks, PoseStack poseMatrix, MultiBufferSource buffer, int packedLight, CallbackInfo ci) {
-//        var passenger = entity.getFirstPassenger();
-//        if (passenger instanceof RollEntity rollEntity) {
-//            if (rollEntity.doABarrelRoll$isRolling()) {
-//                var animation = ((PokemonClientDelegate) entity.getDelegate()).getCurrentModel().getCurrentState().getPrimaryAnimation();
-//                if (animation instanceof BedrockStatefulAnimation) {
-//
-//                }
-//                ThirdPersonAnimationSynchronizer.INSTANCE.getOffsets().put(entity.getUUID(), partialTicks);
-//            }
-//        }
-//    }
 
 }

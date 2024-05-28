@@ -1,6 +1,7 @@
 package ca.landonjw
 
 import ca.landonjw.network.NetworkingConstants
+import ca.landonjw.util.PositionHelper
 import com.cobblemon.mod.common.api.events.CobblemonEvents
 import com.cobblemon.mod.common.client.gui.interact.wheel.InteractWheelOption
 import com.cobblemon.mod.common.client.gui.interact.wheel.Orientation
@@ -73,8 +74,7 @@ object DoABibarelRollClient : ClientModInitializer {
 		if (player.vehicle !is PokemonEntity) return false
 		if (player.onGround()) return false
 		if ((player.vehicle as PokemonEntity).onGround()) return false
-		val blockPos = player.vehicle?.blockPosition()?.below()
-		if (blockPos != null && player.level().getBlockState(blockPos).isSolid) return false
+		if (PositionHelper.isNearGround((player.vehicle as PokemonEntity))) return false
 		return true
 	}
 }

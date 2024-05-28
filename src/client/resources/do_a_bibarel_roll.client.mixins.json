@@ -3,11 +3,9 @@
   "package": "ca.landonjw.mixin.client",
   "compatibilityLevel": "JAVA_17",
   "client": [
-    "ExampleClientMixin",
     "LivingEntityRendererMixin",
     "PlayerRendererMixin",
     "PokemonRendererMixin",
-    "BedrockAnimationMixin"
   ],
   "injectors": {
     "defaultRequire": 1
