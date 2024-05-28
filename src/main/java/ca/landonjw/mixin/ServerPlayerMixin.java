@@ -22,18 +22,25 @@ public class ServerPlayerMixin {
             if (!pokemon.isFlying()) {
                 pokemon.setBehaviourFlag(PokemonBehaviourFlag.FLYING, true);
             }
+
             Vec3 lookAngle = player.getLookAngle();
             Vec3 deltaMovement = player.getDeltaMovement();
-            player.setDeltaMovement(deltaMovement.add(
-                    lookAngle.x * 0.1 + (lookAngle.x * 1.5 - deltaMovement.x) * 0.5,
-                    lookAngle.y * 0.1 + (lookAngle.y * 1.5 - deltaMovement.y) * 0.5,
-                    lookAngle.z * 0.1 + (lookAngle.z * 1.5 - deltaMovement.z) * 0.5
-            ));
-            vehicle.setDeltaMovement(
-                    lookAngle.x * 0.1 + (lookAngle.x * 1.5 - deltaMovement.x) * 0.5,
-                    lookAngle.y * 0.1 + (lookAngle.y * 1.5 - deltaMovement.y) * 0.5,
-                    lookAngle.z * 0.1 + (lookAngle.z * 1.5 - deltaMovement.z) * 0.5
-            );
+//            System.out.println(player.yBodyRot);
+//                pokemon.setYBodyRot(player.yBodyRot);
+//                pokemon.setYHeadRot(player.yHeadRot);
+//                player.setDeltaMovement(deltaMovement.add(
+//                        lookAngle.x * 0.1 + (lookAngle.x * 1.5 - deltaMovement.x) * 0.5,
+//                        lookAngle.y * 0.1 + (lookAngle.y * 1.5 - deltaMovement.y) * 0.5,
+//                        lookAngle.z * 0.1 + (lookAngle.z * 1.5 - deltaMovement.z) * 0.5
+//                ));
+            var blockBelow = pokemon.blockPosition().below();
+            if (!player.level().getBlockState(blockBelow).isSolid()) {
+                pokemon.setDeltaMovement(
+                        lookAngle.x * 0.1 + (lookAngle.x * 1.5 - deltaMovement.x) * 0.5,
+                        lookAngle.y * 0.1 + (lookAngle.y * 1.5 - deltaMovement.y) * 0.5,
+                        lookAngle.z * 0.1 + (lookAngle.z * 1.5 - deltaMovement.z) * 0.5
+                );
+            }
         }
     }
 

@@ -1,11 +1,15 @@
 package ca.landonjw.mixin.client;
 
+import ca.landonjw.ThirdPersonAnimationSynchronizer;
+import com.cobblemon.mod.common.client.entity.PokemonClientDelegate;
+import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import nl.enjarai.doabarrelroll.api.RollEntity;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -18,18 +22,53 @@ public class PlayerRendererMixin {
             method = "setupRotations(Lnet/minecraft/client/player/AbstractClientPlayer;Lcom/mojang/blaze3d/vertex/PoseStack;FFF)V",
             at = @At("HEAD")
     )
-    private void doABibarelRoll$modifyRoll(AbstractClientPlayer abstractClientPlayer, PoseStack poseStack, float foo, float bar, float tickDelta, CallbackInfo ci) {
-        RollEntity rollEntity = (RollEntity) abstractClientPlayer;
+    private void doABibarelRoll$modifyRoll(AbstractClientPlayer abstractClientPlayer, PoseStack poseStack, float foo, float bar, float partialTicks, CallbackInfo ci) {
+        if (abstractClientPlayer.isPassenger()) {
+            var vehicle = abstractClientPlayer.getVehicle();
 
-        if (rollEntity.doABarrelRoll$isRolling()) {
-            var camera = Minecraft.getInstance().gameRenderer.getMainCamera();
-            var yaw = camera.getYRot() / 57.2958f;
+            if (vehicle instanceof PokemonEntity pokemonEntity) {
+                var camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+                var yaw = camera.getYRot() / 57.2958f;
 
-            poseStack.last().pose()
-                    .mul(camera.rotation().get(new Matrix4f()))
-                    .rotateY(yaw);
 
-            abstractClientPlayer.yBodyRot = abstractClientPlayer.yHeadRot;
+                var delegate = (PokemonClientDelegate) pokemonEntity.getDelegate();
+                var model = delegate.getCurrentModel();
+
+                Vector3f defaultPokemonPosition = new Vector3f(0F, 0F, 0F);
+                Vector3f currentPokemonPosition = new Vector3f(0F, 0F, 0F);
+
+                if (model != null) {
+                    var state = model.getState(pokemonEntity);
+                    if (state != null) {
+                        state.setTimeEnteredPose(0F);
+                        state.updatePartialTicks(partialTicks);
+                        model.setupAnimStateful(null, state, 0F, 0F, 0F, 0F, 0F);
+                        if (model.getRelevantPartsByName().containsKey("body")) {
+                            var body = model.getPart("body");
+                            currentPokemonPosition = new Vector3f(-body.x, body.y, -body.z);
+                        }
+                        model.setDefault();
+                        if (model.getRelevantPartsByName().containsKey("body")) {
+                            var body = model.getPart("body");
+                            defaultPokemonPosition = new Vector3f(-body.x, body.y, -body.z);
+                        }
+                    }
+                }
+
+                var animationOffset = defaultPokemonPosition.sub(currentPokemonPosition).mul(0.1F);
+
+//                var pokemonFrame = ThirdPersonAnimationSynchronizer.INSTANCE.getOffsets().get(pokemonEntity.getUUID());
+
+//                var offset = new Vector3f(0f, (float) (Math.sin(pokemonFrame * 90 * 3 * 1.5 - 90)), 0f);
+
+
+                poseStack.last().pose()
+                        .mul(camera.rotation().get(new Matrix4f()))
+                        .translate(animationOffset)
+                        .rotateY(yaw);
+
+                abstractClientPlayer.yBodyRot = abstractClientPlayer.yHeadRot;
+            }
         }
     }
 
