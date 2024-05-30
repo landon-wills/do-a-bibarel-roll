@@ -78,7 +78,8 @@ dependencies {
 	}
 
 	modImplementation("dev.architectury:architectury-fabric:9.1.12")
-	modImplementation("com.cobblemon:fabric:1.5.0+1.20.1-SNAPSHOT")
+//	modImplementation("com.cobblemon:fabric:1.5.0+1.20.1-SNAPSHOT")
+	modImplementation(files("./libs/Cobblemon-fabric-1.5.0+1.20.1.jar"))
 }
 
 processResources {

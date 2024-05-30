@@ -2,12 +2,9 @@ package ca.landonjw.util
 
 import net.minecraft.core.BlockPos
 import net.minecraft.world.entity.Entity
+import nl.enjarai.doabarrelroll.api.RollEntity
 
-object PositionHelper {
-
-    fun isNearGround(entity: Entity): Boolean {
-        val blockBelow: BlockPos = entity.blockPosition().below()
-        return entity.level().getBlockState(blockBelow).isSolid()
-    }
-
+fun Entity.isNearGround(): Boolean {
+    val blockBelow: BlockPos = this.blockPosition().below()
+    return this.level().getBlockState(blockBelow).isSolid()
 }
