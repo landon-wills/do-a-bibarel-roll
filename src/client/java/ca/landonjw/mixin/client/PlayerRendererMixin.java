@@ -22,7 +22,7 @@ public class PlayerRendererMixin {
             var vehicle = player.getVehicle();
 
             if (vehicle instanceof PokemonEntity entity) {
-                MountedPlayerRenderer.INSTANCE.render(player, entity, poseStack, partialTicks);
+                MountedPlayerRenderer.INSTANCE.render(player, entity, poseStack);
             }
         }
     }
