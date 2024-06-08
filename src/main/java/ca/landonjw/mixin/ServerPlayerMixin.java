@@ -1,7 +1,7 @@
 package ca.landonjw.mixin;
 
 
-import ca.landonjw.entity.MovementController;
+//import ca.landonjw.entity.MovementController;
 import net.minecraft.server.level.ServerPlayer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -13,7 +13,7 @@ public class ServerPlayerMixin {
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void doABibarelRoll$addRidingVelocity(CallbackInfo info) {
-        MovementController.INSTANCE.tick((ServerPlayer) (Object) this);
+//        MovementController.INSTANCE.tick((ServerPlayer) (Object) this);
     }
 
 }

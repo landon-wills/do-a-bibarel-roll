@@ -14,21 +14,23 @@ import org.joml.Vector3f
 object MountedPlayerRenderer {
 
     fun render(player: AbstractClientPlayer, entity: PokemonEntity, stack: PoseStack) {
-        val camera = Minecraft.getInstance().gameRenderer.mainCamera
-        val yaw = camera.yRot.toRadians()
-        val isEntityFlying = !entity.isNearGround()
+        if (player === Minecraft.getInstance().player) {
+            val camera = Minecraft.getInstance().gameRenderer.mainCamera
+            val yaw = camera.yRot.toRadians()
+            val isEntityFlying = !entity.isNearGround()
 
-        val offset = getOffset(player, entity, isEntityFlying, yaw)
+            val offset = getOffset(player, entity, isEntityFlying, yaw)
 
-        val matrix = stack.last().pose()
-        if (isEntityFlying) {
-            val cameraRotation = camera.rotation().get(Matrix4f())
-            matrix.mul(cameraRotation)
+            val matrix = stack.last().pose()
+            if (isEntityFlying) {
+                val cameraRotation = camera.rotation().get(Matrix4f())
+                matrix.mul(cameraRotation)
+            }
+            matrix.translate(offset)
+            if (isEntityFlying) matrix.rotateY(yaw)
+
+            player.yBodyRot = player.yHeadRot
         }
-        matrix.translate(offset)
-        if (isEntityFlying) matrix.rotateY(yaw)
-
-        player.yBodyRot = player.yHeadRot
     }
 
     private fun getOffset(
@@ -40,7 +42,6 @@ object MountedPlayerRenderer {
         val mountOrigin = (entity.delegate as PokemonClientDelegate).locatorStates["mount_locator"]?.getOrigin() ?: return Vector3f()
         val playerOrigin = Vec3(player.x, player.y, player.z)
         val offsetOrigin = mountOrigin.subtract(playerOrigin).subtract(0.0, 0.6, 0.0)
-
         val offsetMatrix = Matrix4f()
         if (isEntityFlying) offsetMatrix.rotateY(yaw)
         offsetMatrix.translate(offsetOrigin.toVector3f())
