@@ -18,7 +18,7 @@ public class PokemonRendererMixin {
             at = @At(value = "HEAD")
     )
     public void doABibarelRoll$renderPokemon(PokemonEntity entity, float entityYaw, float partialTicks, PoseStack poseMatrix, MultiBufferSource buffer, int packedLight, CallbackInfo ci) {
-        MountedPokemonRenderer.INSTANCE.render(entity, poseMatrix);
+        MountedPokemonRenderer.INSTANCE.render(entity, poseMatrix, partialTicks);
     }
 
 }

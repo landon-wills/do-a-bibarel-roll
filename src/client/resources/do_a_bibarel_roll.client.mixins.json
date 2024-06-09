@@ -5,7 +5,7 @@
   "client": [
     "PlayerRendererMixin",
     "PokemonRendererMixin",
-    "LivingEntityRendererMixin"
+    "LocalPlayerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

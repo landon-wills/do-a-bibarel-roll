@@ -13,32 +13,36 @@ import org.joml.Vector3f
 
 object MountedPlayerRenderer {
 
-    fun render(player: AbstractClientPlayer, entity: PokemonEntity, stack: PoseStack) {
-        if (player === Minecraft.getInstance().player) {
-            if (entity.isNearGround()) return
-            val camera = Minecraft.getInstance().gameRenderer.mainCamera
-            val yaw = camera.yRot.toRadians()
+    fun render(player: AbstractClientPlayer, entity: PokemonEntity, stack: PoseStack, roll: Float, partialTicks: Float) {
+            val yLerp = lerp(player.yRotO.toRadians(), player.yRot.toRadians(), partialTicks)
+            val xLerp = lerp(player.xRotO.toRadians(), player.xRot.toRadians(), partialTicks)
 
-            val offset = getOffset(player, entity, yaw)
+            val isEntityFlying = !entity.isNearGround()
+
+            val offset = getOffset(player, entity, isEntityFlying, yLerp)
 
             val matrix = stack.last().pose()
-            val cameraRotation = camera.rotation().get(Matrix4f())
-            matrix.mul(cameraRotation)
+
+            if (isEntityFlying) {
+                matrix.rotateY(-yLerp)
+                matrix.rotateX(xLerp)
+                matrix.rotateZ(roll.toRadians())
+            }
             matrix.translate(offset)
-            matrix.rotateY(yaw)
-        }
+            if (isEntityFlying) matrix.rotateY(yLerp)
     }
 
     private fun getOffset(
         player: AbstractClientPlayer,
         entity: PokemonEntity,
+        isEntityFlying: Boolean,
         yaw: Float
     ): Vector3f {
         val mountOrigin = (entity.delegate as PokemonClientDelegate).locatorStates["mount_locator"]?.getOrigin() ?: return Vector3f()
         val playerOrigin = Vec3(player.x, player.y, player.z)
         val offsetOrigin = mountOrigin.subtract(playerOrigin).subtract(0.0, 0.6, 0.0)
         val offsetMatrix = Matrix4f()
-        offsetMatrix.rotateY(yaw)
+        if (isEntityFlying) offsetMatrix.rotateY(yaw)
         offsetMatrix.translate(offsetOrigin.toVector3f())
         return offsetMatrix.getTranslation(Vector3f())
     }

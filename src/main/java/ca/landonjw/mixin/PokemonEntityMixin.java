@@ -40,7 +40,7 @@ public abstract class PokemonEntityMixin extends LivingEntity {
         super.tickRidden(player, vec3);
         this.setNoGravity(true);
         this.setBehaviourFlag(PokemonBehaviourFlag.FLYING, !PositionHelperKt.isNearGround(this));
-        var rotation = new Vec2(player.getXRot() * 0.5f, player.getYRot());
+        var rotation = new Vec2(player.getXRot(), player.getYRot());
         this.setRot(rotation.y, rotation.x);
         this.yHeadRot = this.getYRot();
         this.yBodyRot = this.getYRot();
@@ -50,9 +50,9 @@ public abstract class PokemonEntityMixin extends LivingEntity {
         if (!PositionHelperKt.isNearGround(this) || lookAngle.y >= 0.3) {
             var deltaMovement = this.getDeltaMovement();
             this.setDeltaMovement(
-                    lookAngle.x * 0.1 + (lookAngle.x * 1.5 - deltaMovement.x) * 0.5,
-                    lookAngle.y * 0.1 + (lookAngle.y * 1.5 - deltaMovement.y) * 0.5,
-                    lookAngle.z * 0.1 + (lookAngle.z * 1.5 - deltaMovement.z) * 0.5
+                    lookAngle.x * 0.1 + (lookAngle.x * 1.5 - deltaMovement.x) * 1,
+                    lookAngle.y * 0.1 + (lookAngle.y * 1.5 - deltaMovement.y) * 1,
+                    lookAngle.z * 0.1 + (lookAngle.z * 1.5 - deltaMovement.z) * 1
             );
         }
     }
@@ -101,11 +101,6 @@ public abstract class PokemonEntityMixin extends LivingEntity {
     @Override
     protected float getRiddenSpeed(Player player) {
         return 1;
-    }
-
-    @Unique
-    private double clamp(double value, double min, double max) {
-        return Math.min(max, Math.max(min, value));
     }
 
 }

@@ -12,6 +12,13 @@ public class RollingHelper {
         throw new IllegalStateException("Entity is not currently rolling");
     }
 
+    public static float getRoll(Entity entity, float partialTick) {
+        if (entity instanceof RollEntity rollEntity) {
+            return rollEntity.doABarrelRoll$getRoll(partialTick);
+        }
+        throw new IllegalStateException("Entity is not currently rolling");
+    }
+
     public static boolean isRolling(Entity entity) {
         return entity instanceof RollEntity rollEntity && rollEntity.doABarrelRoll$isRolling();
     }
